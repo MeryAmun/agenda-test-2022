@@ -1,23 +1,46 @@
-import React, { useState } from 'react';
-import { Form, Button, Modal } from 'react-bootstrap'
+import React, { useState,useEffect } from 'react';
+import { Form, Button, Modal } from 'react-bootstrap';
+import { v4 as uuid } from 'uuid';
 
 
-const now = new Date()
+
+const _id = uuid().slice(0,2)
+const now = new Date();
+
+
 const initialState = {
+id:_id,
 title:'',
 description:'',
 status:'',
-date: now.getDate()/now.getMonth()/now.getFullYear(),
-time:now.toLocaleTimeString()
+startDate: now.toDateString(),
+endDate:'',
 }
-console.log(now.getDate(),now.getMonth() + 1,now.getFullYear(), now.toLocaleTimeString());
+
 
 
 const ModalComponent = ({showModal, handleClose}) => {
-    const [data, setData] = useState(initialState)
+    const [data, setData] = useState(initialState);
+    const [agenda, setAgenda] = useState([]);
    
-    
+    const handleChange = (e) => {
+ const {name, value } = e.target
+ setData((prev) =>  {
+    return {...prev, [name]:value }
+ })
+    }
 
+const handleSubmit = () => {
+setAgenda((prev) => {
+    return [...prev, data]
+})
+}
+
+  
+
+useEffect(() => {
+    console.log(agenda)
+}, [agenda])
 
   return (
     <>
@@ -27,20 +50,35 @@ const ModalComponent = ({showModal, handleClose}) => {
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-            <Form.Label>Email address</Form.Label>
+          <Form.Group className="mb-3 outline-light" controlId="title" onSubmit={handleSubmit}>
             <Form.Control
-              type="email"
-              placeholder="name@example.com"
+              type="text"
+              placeholder="Title"
               autoFocus
+              name='title'
+              onChange={handleChange}
             />
           </Form.Group>
           <Form.Group
             className="mb-3"
             controlId="exampleForm.ControlTextarea1"
           >
-            <Form.Label>Example textarea</Form.Label>
-            <Form.Control as="textarea" rows={3} />
+            <Form.Control as="textarea" rows={3} placeholder="Description" name='description'  onChange={handleChange}/>
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="status">
+           <Form.Select aria-label="Default select example" name='status' onChange={handleChange}>
+      <option value="completed">Completed</option>
+      <option value="pending">Pending</option>
+    </Form.Select>
+          </Form.Group>
+          <Form.Group className="mb-3 outline-light" controlId="title">
+            <Form.Control
+              type="text"
+              placeholder="End Date"
+              autoFocus
+              name='endDate'
+              onChange={handleChange}
+            />
           </Form.Group>
         </Form>
       </Modal.Body>
@@ -48,7 +86,7 @@ const ModalComponent = ({showModal, handleClose}) => {
         <Button variant="secondary" onClick={handleClose}>
           Close
         </Button>
-        <Button variant="primary" onClick={handleClose}>
+        <Button variant="primary" type='submit' onClick={handleSubmit}>
           Save Changes
         </Button>
       </Modal.Footer>

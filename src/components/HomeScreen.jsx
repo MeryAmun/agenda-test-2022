@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Table, Container } from "react-bootstrap";
 import { ModalComponent} from "./index";
+import { FaTimes} from 'react-icons/fa';
+import { TiPlus } from 'react-icons/ti';
+import { AiTwotoneEdit }from 'react-icons/ai'
 
 const HomeScreen = () => {
-  const [agenda, setAgenda] = useState();
   const [show, setShow] = useState(false);
 
   
@@ -16,7 +18,7 @@ const HomeScreen = () => {
 };
   return (
     <Container className="p-2 d-flex  flex-column justify-content-center align-items-center">
-         <ModalComponent showModal={show} handleClose={handleClose}/>
+         <ModalComponent  showModal={show} handleClose={handleClose}/>
       <div className="header m-4">
         <h4>Agenda Application</h4>
       </div>
@@ -44,19 +46,19 @@ const HomeScreen = () => {
                 className="btn btn-primary m-1 border border-0"
                 onClick={handleShow}
               >
-                Add
+               <TiPlus title="Add"/>
               </button>
               <button
                 type="button"
                 className="btn btn-primary m-1 bg-danger border border-0"
               >
-                Remove
+               <FaTimes title="Delete"/>
               </button>
               <button
                 type="button"
                 className="btn btn-primary m-1 bg-success border border-0"
               >
-                Edit
+               <AiTwotoneEdit title="Edit"/>
               </button>
             </td>
           </tr>
