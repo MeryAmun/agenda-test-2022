@@ -7,16 +7,16 @@ export const addAGenda = (agenda) => dispatch => {
  //localStorage.setItem('agendas', JSON.stringify([agenda]))
  
 };
-export const deleteAGenda = (index) => dispatch => {
+export const deleteAGenda = (id) => dispatch => {
   dispatch({
     type: DELETE_AGENDA,
-    payload: index,
+    payload: id,
   });
 };
-export const editAGenda = (agenda, index) => dispatch => {
+export const editAGenda = (id) => dispatch => {
   dispatch({
     type:UPDATE_AGENDA,
-    payload: agenda,index
+    payload: id
   });
 };
 

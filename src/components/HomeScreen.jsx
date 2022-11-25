@@ -1,21 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import { Table, Container } from "react-bootstrap";
-import { ModalComponent} from "./index";
+import { ModalComponent, CsvForm} from "./index";
 import { FaTimes} from 'react-icons/fa';
-import { TiPlus } from 'react-icons/ti';
 import { AiTwotoneEdit }from 'react-icons/ai'
 import { useSelector, useDispatch } from "react-redux";
 import { reducer } from "../redux/reducer";
-import { deleteAGenda, editAGenda } from "../redux/actions";
+import { deleteAGenda} from "../redux/actions";
 
 const HomeScreen = () => {
   const [show, setShow] = useState(false);
-  const [currentId, setCurrentId] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editId, setEditId] = useState(null);
   const { agendas }  = useSelector((state) => state.reducer);
   const dispatch = useDispatch()
-  const [data, setData] = useState(JSON.parse(localStorage.getItem('agendas')))
+  const [data, setData] = useState()
 
-  console.log(data,'local')
 
 
   const handleShow = () => {
@@ -24,23 +23,34 @@ const HomeScreen = () => {
   const handleClose = () => {
     setShow(false)
 };
+
+// const editHandler = (itemIndex) => {
+//   const specificItem = agendas.find((item, index) => {
+//     if(index === itemIndex){
+//   }  return item})
+//   setIsEditing(true);
+//   setEditId(index)
+//  dispatch(editAGenda(index))
+//   setData(specificItem);
+//   handleShow()
+// };
+
+console.log(agendas)
+console.log(editId)
   return (
     <Container className="p-2 d-flex  flex-column justify-content-center align-items-center">
          <ModalComponent  
          showModal={show} 
          handleClose={handleClose} 
-         currentId={currentId}
-         setCurrentId={setCurrentId}
+         editedData={data}
+         isEditing={isEditing}
+         setIsEditing={setIsEditing}
+         editId={editId}
+         setEditId={setEditId}
          />
       <div className="header m-4">
         <h4>Agenda Application</h4>
-        <button
-                type="button"
-                className="btn btn-primary m-1 border border-0"
-                onClick={handleShow}
-              >
-               <TiPlus title="Add"/>
-              </button>
+        <CsvForm handleShow={handleShow}/>
       </div>
       <Table striped bordered hover>
         <thead>
@@ -54,11 +64,12 @@ const HomeScreen = () => {
           </tr>
         </thead>
         {
-          agendas.map((agenda, index) => (
-            <tbody  key={index}>
+          agendas.sort((a, b) => b - a)
+          .map((agenda) => (
+            <tbody  key={agenda.id}>
           <tr>
             <td>{agenda.title}</td>
-            <td>{agenda.description}</td>
+            <td  className="word-wrap">{agenda.description}</td>
             <td>{agenda.status}</td>
             <td>{agenda.startDate}</td>
             <td>{agenda.deadline}</td>
@@ -67,14 +78,20 @@ const HomeScreen = () => {
               <button
                 type="button"
                 className="btn btn-primary m-1 bg-danger border border-0"
-                onClick={() => dispatch(deleteAGenda(index))}
+                onClick={() => dispatch(deleteAGenda(agenda.id))}
               >
                <FaTimes title="Delete"/>
               </button>
               <button
                 type="button"
                 className="btn btn-primary m-1 bg-success border border-0"
-                onClick={() => dispatch(editAGenda(index))}
+                onClick={() => {
+                  setIsEditing(true);
+                  // dispatch(editAGenda(agenda,agenda.id))
+                  setEditId(agenda.id)
+                  setData(agenda)
+                handleShow() 
+                }}
               >
                <AiTwotoneEdit title="Edit"/>
               </button>

@@ -1,131 +1,173 @@
-import React, { useState,useEffect } from 'react';
-import { Form, Button, Modal } from 'react-bootstrap';
-import { v4 as uuid } from 'uuid';
-import{ useDispatch, useSelector} from 'react-redux'
-import { addAGenda, editAGenda } from '../redux/actions';
+import React, { useState } from "react";
+import {  Button, Modal} from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { addAGenda, editAGenda } from "../redux/actions";
+import  moment from 'moment'
 
-
-
-const _id = uuid().slice(0,2)
 const now = new Date();
-
-
-
 const initialState = {
-title:'',
-description:'',
-status:'',
-startDate: now.toDateString(),
-deadline:'',
-}
+  title: "",
+  description: "",
+  status: "",
+  startDate: moment().format("MMM Do YY"),
+  deadline: "",
+};
+
+const ModalComponent = ({
+  showModal,
+  handleClose,
+  editedData,
+  isEditing,
+  setIsEditing,
+  editId,
+  setEditId,
+}) => {
+  const [data, setData] = useState(initialState);
+  const [error, setError] = useState("");
+ // const { agendas } = useSelector((state) => state.reducer);
+  const dispatch = useDispatch();
+const id = (Math.random() * 100).toFixed(6);
 
 
-
-const ModalComponent = ({showModal, handleClose,currentId, setCurrentId}) => {
-    const [data, setData] = useState(initialState);
-    const {agendas}  = useSelector((state) => state.reducer);
-    const dispatch = useDispatch();
-    const [storeData, setStoreData] = useState(agendas)
-    const agenda = useSelector((agendas) =>
-    currentId ? agendas.find((a,index) => index === currentId) : null
-  )
-useEffect(() => { localStorage.setItem('agendas', JSON.stringify(storeData)); }, [storeData]);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setData((prev) => {
+      return { ...prev, [name]: value };
+    });
+  };
+  console.log(editedData)
+  console.log(editId)
 
 
-  console.log(agendas,'state')
-  console.log(agenda)
-   
-    const handleChange = (e) => {
- const {name, value } = e.target
- setData((prev) =>  {
-    return {...prev, [name]:value }
- })
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (data.title === "") setError("please fill in Title");
+    if (data.description === "") setError("please fill in Description");
+    if (data.status === "") setError("please fill in Status");
+    if (data.deadline === "") setError("please fill in deadline");
+     if (editedData && isEditing && editId) {
+      setData({
+        id:editId,
+        title: editedData.title,
+        description: editedData.description,
+        status: editedData.status,
+        startDate: now.toDateString(),
+        deadline: editedData.deadline,
+      });
+     dispatch(editAGenda(editId, {
+      id:editId,
+      title: editedData.title,
+      description: editedData.description,
+      status: editedData.status,
+      startDate:editedData.startDate,
+      deadline: editedData.deadline,
+    }))
+      // if(editedData.title && editedData.deadline && editedData.description && editedData.status && editIndex)
+      // setData(editedData);
+      setEditId(null);
+      setIsEditing(false);
+      console.log(data)
+    } 
+      if(data.title && data.deadline && data.description && data.status){
+      dispatch(addAGenda({...data,id}));
+      setData({
+        title: "",
+        description: "",
+        status: "",
+        startDate:"",
+        deadline: "",
+      });
+      clear();
     }
-    useEffect(() => {
-      if (agenda) setData(agenda)
-    }, [agenda])
-   
-const handleSubmit = (e) => { 
-  e.preventDefault() 
-  if (!currentId) {
-    dispatch(addAGenda(data))
-  } else {
-    dispatch(editAGenda(currentId,data))
-  }
-  clear()
+    //setValidated(true);
+    // clear()
+    //handleClose()
+  };
 
-}
-
-const clear = () => {
-  setCurrentId(null)
-  setData({
-    title:'',
-    description:'',
-    status:'',
-    startDate: now.toDateString(),
-    deadline:'',
-  })
-}
+  const clear = () => {
+    setEditId(null);
+    setData({
+      title: "",
+      description: "",
+      status: "",
+      startDate: "",
+      deadline: "",
+    });
+  };
 
 
-// useEffect(() => {
-//   localStorage.setItem('agendas', JSON.stringify())
-// }, [agendas])
 
   return (
     <>
-    <Modal show={showModal} onHide={handleClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>Modal heading</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form>
-          <Form.Group className="mb-3 outline-light" controlId="title" onSubmit={handleSubmit}>
-            <Form.Control
-              type="text"
-              placeholder="Title"
-              autoFocus
-              name='title'
-              value={data.title}
-              onChange={handleChange}
-            />
-          </Form.Group>
-          <Form.Group
-            className="mb-3"
-            controlId="exampleForm.ControlTextarea1"
-          >
-            <Form.Control as="textarea" rows={3} placeholder="Description" value={data.description} name='description'  onChange={handleChange}/>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="status">
-           <Form.Select aria-label="Default select example" value={data.status} name='status' onChange={handleChange}>
-      <option>Select Status</option>
-      <option value="completed">Completed</option>
-      <option value="pending">Pending</option>
-    </Form.Select>
-          </Form.Group>
-          <Form.Group className="mb-3 outline-light" controlId="title">
-            <Form.Control
-              type="text"
-              placeholder="End Date"
-              autoFocus
-              name='deadline'
-              value={data.deadline}
-              onChange={handleChange}
-            />
-          </Form.Group>
-        </Form>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
-        </Button>
-        <Button variant="primary" type='submit' onClick={handleSubmit}>
-          Save Changes
-        </Button>
-      </Modal.Footer>
-    </Modal>
-  </>
-  )
-}
+      <Modal show={showModal} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Agenda</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group mb-3">
+              <input
+                className="w-100 rounded border p-1"
+                required={true}
+                type="text"
+                placeholder="Title"
+                name="title"
+                value={data.title}
+                onChange={handleChange}
+              />
+              <span className="text-danger">{error}</span>
+            </div>
+            <div className="form-group mb-3">
+              <textarea
+                className="w-100 rounded border p-1"
+                rows={3}
+                placeholder="Description"
+                value={data.description}
+                name="description"
+                onChange={handleChange}
+                required={true}
+              ></textarea>
+              <span className="text-danger">{error}</span>
+            </div>
+            <div className="form-group mb-3">
+              <select
+                className="w-100 rounded border p-1"
+                value={data.status}
+                name="status"
+                onChange={handleChange}
+                required={true}
+              >
+                <option>Select Status</option>
+                <option value="completed">Completed</option>
+                <option value="pending">Pending</option>
+              </select>
+              <span className="text-danger">{error}</span>
+            </div>
+            <div className="form-group mb-3 outline-light">
+              <input
+                type="text"
+                className="w-100 rounded border p-1"
+                placeholder="End Date"
+                name="deadline"
+                value={data.deadline}
+                onChange={handleChange}
+                required={true}
+              />
+              <span className="text-danger">{error}</span>
+            </div>
+          </form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" type="submit" onClick={handleSubmit}>
+            {isEditing ? "Edit" : "Save"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+};
 
-export default ModalComponent
+export default ModalComponent;
