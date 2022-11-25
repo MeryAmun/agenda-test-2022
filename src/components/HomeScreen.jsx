@@ -50,7 +50,13 @@ console.log(editId)
          />
       <div className="header m-4">
         <h4>Agenda Application</h4>
-        <CsvForm handleShow={handleShow}/>
+        <button
+          type="button"
+          className="btn btn-primary m-1 border border-0"
+          onClick={handleShow}
+        >
+          Add Agenda
+        </button>
       </div>
       <Table striped bordered hover>
         <thead>
@@ -104,6 +110,13 @@ console.log(editId)
           ) )
         }
       </Table>
+
+      <div className="container m-4 d-flex flex-column justify-content-center text-center">
+<div className="header m-4">
+  <h4>Import Files Here</h4>
+</div>
+<CsvForm/>
+</div>
     </Container>
   );
 };

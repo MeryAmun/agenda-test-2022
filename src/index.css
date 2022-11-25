@@ -12,6 +12,6 @@
     clip: rect(1px, 1px, 1px, 1px);
   }
   
-  input.visually-hidden:is(:focus, :focus-within) + label {
+  input.visually-hidden:is(:focus, :focus-within) + button {
     outline: none;
   }
