@@ -1,12 +1,15 @@
-import React, { useState, useRef } from "react";
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useState } from "react";
+
+import { Table } from "react-bootstrap";
+import { CSVLink } from "react-csv";
+
 
 const CsvForm = () => {
   const [file, setFile] = useState();
   const [csvArray, setCsvArray] = useState();
   const fileReader = new FileReader();
-  const { agendas } = useSelector((state) => state.reducer);
-  const dispatch = useDispatch()
+ 
+  
 
 
   const csvFileToArray = string => {
@@ -46,11 +49,10 @@ if(csvArray?.length > 0 ) {
    headerKeys = Object.keys(Object.assign({}, ...csvArray));
 }
 
-console.log(agendas)
-console.log(csvArray)
-console.log(headerKeys)
+
   return (
     <div className="d-flex flex-column justify-content-center align-items-center m-3">
+      <div className="container d-flex justify-content-center align-items-center">
       <div className="form-group m-4">
       <input
         type={"file"}
@@ -65,7 +67,17 @@ console.log(headerKeys)
           Import CSV
         </button>
       </div> 
-      <table>
+      <div className="form-group">
+      <button className="btn btn-success">
+     {
+        csvArray?.length ? 
+        <CSVLink data={csvArray} className='text-white text-decoration-none'>Download CSV</CSVLink> : 
+        <CSVLink data={[]} className='text-white text-decoration-none'>Nothing to Download</CSVLink>
+     }
+      </button>
+      </div>
+      </div>
+      <Table striped bordered hover>
         <thead>
           <tr key={"header"}>
             {headerKeys?.map((key) => (
@@ -83,7 +95,7 @@ console.log(headerKeys)
             </tr>
           ))}
         </tbody>
-      </table>
+      </Table>
     </div>
   );
 };
