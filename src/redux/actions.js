@@ -1,20 +1,25 @@
-import * as actions from "./constants";
+import {ADD_AGENDA,DELETE_AGENDA,UPDATE_AGENDA, TOGGLE_MODAL} from "./constants";
 
-export const addAGenda = (agenda) => (dispatch) => {
+
+export const addAGenda = (agenda) => dispatch => {
+  dispatch({type: ADD_AGENDA, payload: agenda,
+  });
+ //localStorage.setItem('agendas', JSON.stringify([agenda]))
+ 
+};
+export const deleteAGenda = (index) => dispatch => {
   dispatch({
-    actionType: actions.ADD_AGENDA,
-    payload: agenda,
+    type: DELETE_AGENDA,
+    payload: index,
   });
 };
-export const deleteAGenda = (id) => (dispatch) => {
+export const editAGenda = (agenda, index) => dispatch => {
   dispatch({
-    actionType: actions.DELETE_AGENDA,
-    payload: id,
+    type:UPDATE_AGENDA,
+    payload: agenda,index
   });
 };
-export const editAGenda = (agenda, id) => (dispatch) => {
-  dispatch({
-    actionType: actions.UPDATE_AGENDA,
-    payload: agenda,id
-  });
-};
+
+export const toggleModal = (showModal) => dispatch => {
+dispatch({type:TOGGLE_MODAL, payload:showModal })
+}

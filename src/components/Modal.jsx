@@ -1,6 +1,8 @@
 import React, { useState,useEffect } from 'react';
 import { Form, Button, Modal } from 'react-bootstrap';
 import { v4 as uuid } from 'uuid';
+import{ useDispatch, useSelector} from 'react-redux'
+import { addAGenda, editAGenda } from '../redux/actions';
 
 
 
@@ -8,20 +10,30 @@ const _id = uuid().slice(0,2)
 const now = new Date();
 
 
+
 const initialState = {
-id:_id,
 title:'',
 description:'',
 status:'',
 startDate: now.toDateString(),
-endDate:'',
+deadline:'',
 }
 
 
 
-const ModalComponent = ({showModal, handleClose}) => {
+const ModalComponent = ({showModal, handleClose,currentId, setCurrentId}) => {
     const [data, setData] = useState(initialState);
-    const [agenda, setAgenda] = useState([]);
+    const {agendas}  = useSelector((state) => state.reducer);
+    const dispatch = useDispatch();
+    const [storeData, setStoreData] = useState(agendas)
+    const agenda = useSelector((agendas) =>
+    currentId ? agendas.find((a,index) => index === currentId) : null
+  )
+useEffect(() => { localStorage.setItem('agendas', JSON.stringify(storeData)); }, [storeData]);
+
+
+  console.log(agendas,'state')
+  console.log(agenda)
    
     const handleChange = (e) => {
  const {name, value } = e.target
@@ -29,18 +41,36 @@ const ModalComponent = ({showModal, handleClose}) => {
     return {...prev, [name]:value }
  })
     }
+    useEffect(() => {
+      if (agenda) setData(agenda)
+    }, [agenda])
+   
+const handleSubmit = (e) => { 
+  e.preventDefault() 
+  if (!currentId) {
+    dispatch(addAGenda(data))
+  } else {
+    dispatch(editAGenda(currentId,data))
+  }
+  clear()
 
-const handleSubmit = () => {
-setAgenda((prev) => {
-    return [...prev, data]
-})
 }
 
-  
+const clear = () => {
+  setCurrentId(null)
+  setData({
+    title:'',
+    description:'',
+    status:'',
+    startDate: now.toDateString(),
+    deadline:'',
+  })
+}
 
-useEffect(() => {
-    console.log(agenda)
-}, [agenda])
+
+// useEffect(() => {
+//   localStorage.setItem('agendas', JSON.stringify())
+// }, [agendas])
 
   return (
     <>
@@ -56,6 +86,7 @@ useEffect(() => {
               placeholder="Title"
               autoFocus
               name='title'
+              value={data.title}
               onChange={handleChange}
             />
           </Form.Group>
@@ -63,10 +94,11 @@ useEffect(() => {
             className="mb-3"
             controlId="exampleForm.ControlTextarea1"
           >
-            <Form.Control as="textarea" rows={3} placeholder="Description" name='description'  onChange={handleChange}/>
+            <Form.Control as="textarea" rows={3} placeholder="Description" value={data.description} name='description'  onChange={handleChange}/>
           </Form.Group>
           <Form.Group className="mb-3" controlId="status">
-           <Form.Select aria-label="Default select example" name='status' onChange={handleChange}>
+           <Form.Select aria-label="Default select example" value={data.status} name='status' onChange={handleChange}>
+      <option>Select Status</option>
       <option value="completed">Completed</option>
       <option value="pending">Pending</option>
     </Form.Select>
@@ -76,7 +108,8 @@ useEffect(() => {
               type="text"
               placeholder="End Date"
               autoFocus
-              name='endDate'
+              name='deadline'
+              value={data.deadline}
               onChange={handleChange}
             />
           </Form.Group>
