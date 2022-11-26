@@ -35,9 +35,9 @@ const HomeScreen = () => {
          editId={editId}
          setEditId={setEditId}
          />
-      <div className="header m-4">
+      <div className="header m-4 text-center">
         <h4>Agenda Application</h4>
-       <div className="d-flex justify-content-center align-items-center">
+       <div className="d-flex justify-content-center align-items-center m-4">
        <button
           type="button"
           className="btn btn-primary m-1 border border-0 mx-4"

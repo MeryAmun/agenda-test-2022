@@ -1,8 +1,9 @@
-import React, { useState,useEffect } from "react";
+import React, { useState,useEffect,useRef, createRef } from "react";
 import {  Button, Modal} from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { addAGenda, editAGenda } from "../redux/actions";
-import  moment from 'moment'
+import  moment from 'moment';
+import SimpleReactValidator from "simple-react-validator";
 
 const now = new Date();
 const initialState = {
@@ -26,8 +27,10 @@ const ModalComponent = ({
   const [error, setError] = useState("");
   const { agendas } = useSelector((state) => state.reducer);
   const dispatch = useDispatch();
+  const simpleValidator = useRef(new SimpleReactValidator());
+  const [, forceUpdate] = useState();
 
-
+  const form = React.createRef()
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,12 +48,16 @@ const ModalComponent = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (data.title === "") setError("please fill in Title");
-    if (data.description === "") setError("please fill in Description");
-    if (data.status === "") setError("please fill in Status");
-    if (data.deadline === "") setError("please fill in deadline");
-
-    const id = (Math.random() * 100).toFixed(6);
+    // if (data.title === "") setError("please fill in Title");
+    // if (data.description === "") setError("please fill in Description");
+    // if (data.status === "") setError("please fill in Status");
+    // if (data.deadline === "") setError("please fill in deadline");
+    const formValid = simpleValidator.current.allValid();
+    if (!formValid) {
+      simpleValidator.current.showMessages(true);
+      forceUpdate(1)
+    }else{
+      const id = (Math.random() * 100).toFixed(6);
      
       if(data.title && data.deadline && data.description && data.status){
       dispatch(addAGenda({...data,id}));
@@ -62,8 +69,12 @@ const ModalComponent = ({
         deadline: "",
       });
       clear();
+      handleClose()
     }
-    handleClose()
+    }
+
+    
+  
   };
 
   const handleEditButton = () => {
@@ -113,7 +124,7 @@ const ModalComponent = ({
           <Modal.Title>Add Agenda</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} ref={form}>
             <div className="form-group mb-3">
               <input
                 className="w-100 rounded border p-1"
@@ -123,8 +134,12 @@ const ModalComponent = ({
                 name="title"
                 value={data.title}
                 onChange={handleChange}
+                onBlur={() => {
+                  simpleValidator.current.showMessageFor('title')
+                  forceUpdate(1)
+                }}
               />
-              {/* <span className="text-danger">{error}</span> */}
+             <span className='text-danger'>{simpleValidator.current.message("title", data.title, "required|title")}</span>
             </div>
             <div className="form-group mb-3">
               <textarea
@@ -135,8 +150,12 @@ const ModalComponent = ({
                 name="description"
                 onChange={handleChange}
                 required={true}
+                onBlur={() => {
+                  simpleValidator.current.showMessageFor('description')
+                  forceUpdate(1)
+                }}
               ></textarea>
-              {/* <span className="text-danger">{error}</span> */}
+             <span className='text-danger'>{simpleValidator.current.message("description", data.description, "required|description")}</span>
             </div>
             <div className="form-group mb-3">
               <select
@@ -145,12 +164,16 @@ const ModalComponent = ({
                 name="status"
                 onChange={handleChange}
                 required={true}
+                onBlur={() => {
+                  simpleValidator.current.showMessageFor('status')
+                  forceUpdate(1)
+                }}
               >
                 <option>Select Status</option>
                 <option value="completed">Completed</option>
                 <option value="pending">Pending</option>
               </select>
-              {/* <span className="text-danger">{error}</span> */}
+             <span className='text-danger'>{simpleValidator.current.message("status", data.status, "required|status")}</span>
             </div>
             <div className="form-group mb-3 outline-light">
               <input
@@ -161,8 +184,12 @@ const ModalComponent = ({
                 value={data.deadline}
                 onChange={handleChange}
                 required={true}
+                onBlur={() => {
+                  simpleValidator.current.showMessageFor('deadline')
+                  forceUpdate(1)
+                }}
               />
-              {/* <span className="text-danger">{error}</span> */}
+             <span className='text-danger'>{simpleValidator.current.message("deadline", data.deadline, "required|deadline")}</span>
             </div>
           </form>
         </Modal.Body>
