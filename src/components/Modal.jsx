@@ -1,8 +1,8 @@
-import React, { useState,useEffect,useRef, createRef } from "react";
-import {  Button, Modal} from "react-bootstrap";
+import React, { useState, useEffect, useRef, createRef } from "react";
+import { Button, Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { addAGenda, editAGenda } from "../redux/actions";
-import  moment from 'moment';
+import moment from "moment";
 import SimpleReactValidator from "simple-react-validator";
 
 const now = new Date();
@@ -27,9 +27,8 @@ const ModalComponent = ({
   const { agendas } = useSelector((state) => state.reducer);
   const dispatch = useDispatch();
   const [, forceUpdate] = useState();
-const form = createRef()
-const simpleValidator = useRef(new SimpleReactValidator());
-
+  const form = createRef();
+  const simpleValidator = useRef(new SimpleReactValidator());
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,56 +38,47 @@ const simpleValidator = useRef(new SimpleReactValidator());
   };
 
   useEffect(() => {
-    agendas?.filter((agenda) => agenda.title )
-  }, [agendas])
-  
-
-
+    agendas?.filter((agenda) => agenda.title);
+  }, [agendas]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const formValid = simpleValidator.current.allValid();
     if (!formValid) {
       simpleValidator.current.showMessages(true);
-      forceUpdate(1)
-    }else{
+      forceUpdate(1);
+    } else {
       const id = (Math.random() * 100).toFixed(6);
-     
-      if(data.title && data.deadline && data.description && data.status){
-      dispatch(addAGenda({...data,id}));
-      setData({
-        title: "",
-        description: "",
-        status: "",
-        startDate:"",
-        deadline: "",
-      });
-      clear();
-      handleClose()
-    }
-    }
 
-    
-  
+      if (data.title && data.deadline && data.description && data.status) {
+        dispatch(addAGenda({ ...data, id }));
+        setData({
+          title: "",
+          description: "",
+          status: "",
+          startDate: "",
+          deadline: "",
+        });
+        clear();
+        handleClose();
+      }
+    }
   };
 
   const handleEditButton = () => {
     if (editedData && isEditing && editId) {
       setData({
-        id:editId,
+        id: editId,
         title: editedData.title,
         description: editedData.description,
         status: editedData.status,
         startDate: now.toDateString(),
         deadline: editedData.deadline,
       });
-     
-    } 
-   
-     dispatch(editAGenda(editId, {...editedData
-    }))
+    }
 
-  }
+    dispatch(editAGenda(editId, { ...editedData }));
+  };
 
   const clear = () => {
     setEditId(null);
@@ -100,8 +90,6 @@ const simpleValidator = useRef(new SimpleReactValidator());
       deadline: "",
     });
   };
-
-
 
   return (
     <>
@@ -120,11 +108,16 @@ const simpleValidator = useRef(new SimpleReactValidator());
                 value={data.title}
                 onChange={handleChange}
                 onBlur={() => {
-                  simpleValidator.current.showMessageFor('title')
-                  forceUpdate(1)
+                  simpleValidator.current.showMessageFor("title");
+                  forceUpdate(1);
                 }}
               />
-             {simpleValidator.current.message("title", data.title, "required|title", { className: 'text-danger' })}
+              {simpleValidator.current.message(
+                "title",
+                data.title,
+                "required|title",
+                { className: "text-danger" }
+              )}
             </div>
             <div className="form-group mb-3">
               <textarea
@@ -135,11 +128,16 @@ const simpleValidator = useRef(new SimpleReactValidator());
                 name="description"
                 onChange={handleChange}
                 onBlur={() => {
-                  simpleValidator.current.showMessageFor('description')
-                  forceUpdate(1)
+                  simpleValidator.current.showMessageFor("description");
+                  forceUpdate(1);
                 }}
               ></textarea>
-             {simpleValidator.current.message("description", data.description, "required|description", { className: 'text-danger' })}
+              {simpleValidator.current.message(
+                "description",
+                data.description,
+                "required|description",
+                { className: "text-danger" }
+              )}
             </div>
             <div className="form-group mb-3">
               <select
@@ -148,15 +146,20 @@ const simpleValidator = useRef(new SimpleReactValidator());
                 name="status"
                 onChange={handleChange}
                 onBlur={() => {
-                  simpleValidator.current.showMessageFor('status')
-                  forceUpdate(1)
+                  simpleValidator.current.showMessageFor("status");
+                  forceUpdate(1);
                 }}
               >
                 <option>Select Status</option>
                 <option value="completed">Completed</option>
                 <option value="pending">Pending</option>
               </select>
-             {simpleValidator.current.message("status", data.status, "required|status", { className: 'text-danger' })}
+              {simpleValidator.current.message(
+                "status",
+                data.status,
+                "required|status",
+                { className: "text-danger" }
+              )}
             </div>
             <div className="form-group mb-3 outline-light">
               <input
@@ -167,11 +170,16 @@ const simpleValidator = useRef(new SimpleReactValidator());
                 value={data.deadline}
                 onChange={handleChange}
                 onBlur={() => {
-                  simpleValidator.current.showMessageFor('deadline')
-                  forceUpdate(1)
+                  simpleValidator.current.showMessageFor("deadline");
+                  forceUpdate(1);
                 }}
               />
-             {simpleValidator.current.message("deadline", data.deadline, "required|deadline", { className: 'text-danger' })}
+              {simpleValidator.current.message(
+                "deadline",
+                data.deadline,
+                "required|deadline",
+                { className: "text-danger" }
+              )}
             </div>
           </form>
         </Modal.Body>

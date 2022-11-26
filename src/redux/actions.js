@@ -1,8 +1,4 @@
-import {
-  ADD_AGENDA,
-  DELETE_AGENDA,
-  UPDATE_AGENDA,
-} from "./constants";
+import { ADD_AGENDA, DELETE_AGENDA, UPDATE_AGENDA } from "./constants";
 
 export const addAGenda = (agenda) => (dispatch) => {
   dispatch({ type: ADD_AGENDA, payload: agenda });
