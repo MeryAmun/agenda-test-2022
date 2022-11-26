@@ -1,21 +1,21 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import { Table, Container } from "react-bootstrap";
-import { ModalComponent, CsvForm} from "./index";
+import { ModalComponent, CsvForm, ExportCsvComponent} from "./index";
 import { FaTimes} from 'react-icons/fa';
 import { AiTwotoneEdit }from 'react-icons/ai'
 import { useSelector, useDispatch } from "react-redux";
-import { reducer } from "../redux/reducer";
 import { deleteAGenda} from "../redux/actions";
+
+
 
 const HomeScreen = () => {
   const [show, setShow] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [fileName] = useState('ReactCsv')
   const { agendas }  = useSelector((state) => state.reducer);
-  const dispatch = useDispatch()
-  const [data, setData] = useState()
-
-
+  const dispatch = useDispatch();
+  const [data, setData] = useState();
 
   const handleShow = () => {
     setShow(true)
@@ -23,7 +23,7 @@ const HomeScreen = () => {
   const handleClose = () => {
     setShow(false)
 };
-
+console.log(agendas)
 // const editHandler = (itemIndex) => {
 //   const specificItem = agendas.find((item, index) => {
 //     if(index === itemIndex){
@@ -35,8 +35,6 @@ const HomeScreen = () => {
 //   handleShow()
 // };
 
-console.log(agendas)
-console.log(editId)
   return (
     <Container className="p-2 d-flex  flex-column justify-content-center align-items-center">
          <ModalComponent  
@@ -50,13 +48,16 @@ console.log(editId)
          />
       <div className="header m-4">
         <h4>Agenda Application</h4>
-        <button
+       <div className="d-flex justify-content-center align-items-center">
+       <button
           type="button"
-          className="btn btn-primary m-1 border border-0"
+          className="btn btn-primary m-1 border border-0 mx-4"
           onClick={handleShow}
         >
           Add Agenda
         </button>
+        <ExportCsvComponent csvData={agendas} fileName={fileName}/>
+       </div>
       </div>
       <Table striped bordered hover>
         <thead>
@@ -93,7 +94,6 @@ console.log(editId)
                 className="btn btn-primary m-1 bg-success border border-0"
                 onClick={() => {
                   setIsEditing(true);
-                  // dispatch(editAGenda(agenda,agenda.id))
                   setEditId(agenda.id)
                   setData(agenda)
                 handleShow() 

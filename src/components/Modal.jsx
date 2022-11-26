@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {  Button, Modal} from "react-bootstrap";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addAGenda, editAGenda } from "../redux/actions";
 import  moment from 'moment'
 
@@ -24,7 +24,7 @@ const ModalComponent = ({
 }) => {
   const [data, setData] = useState(initialState);
   const [error, setError] = useState("");
- // const { agendas } = useSelector((state) => state.reducer);
+  const { agendas } = useSelector((state) => state.reducer);
   const dispatch = useDispatch();
 const id = (Math.random() * 100).toFixed(6);
 
@@ -35,8 +35,13 @@ const id = (Math.random() * 100).toFixed(6);
       return { ...prev, [name]: value };
     });
   };
-  console.log(editedData)
-  console.log(editId)
+
+  useEffect(() => {
+    agendas.filter((agenda) => !agenda.title )
+  }, [agendas])
+  
+
+  console.log(agendas)
 
 
   const handleSubmit = (e) => {
@@ -45,7 +50,23 @@ const id = (Math.random() * 100).toFixed(6);
     if (data.description === "") setError("please fill in Description");
     if (data.status === "") setError("please fill in Status");
     if (data.deadline === "") setError("please fill in deadline");
-     if (editedData && isEditing && editId) {
+     
+      if(data.title && data.deadline && data.description && data.status){
+      dispatch(addAGenda({...data,id}));
+      setData({
+        title: "",
+        description: "",
+        status: "",
+        startDate:"",
+        deadline: "",
+      });
+      clear();
+    }
+  };
+
+  const handleEditButton = () => {
+    if(!editedData && !isEditing && !editId) return null
+    if (editedData && isEditing && editId) {
       setData({
         id:editId,
         title: editedData.title,
@@ -66,23 +87,9 @@ const id = (Math.random() * 100).toFixed(6);
       // setData(editedData);
       setEditId(null);
       setIsEditing(false);
-      console.log(data)
+     
     } 
-      if(data.title && data.deadline && data.description && data.status){
-      dispatch(addAGenda({...data,id}));
-      setData({
-        title: "",
-        description: "",
-        status: "",
-        startDate:"",
-        deadline: "",
-      });
-      clear();
-    }
-    //setValidated(true);
-    // clear()
-    //handleClose()
-  };
+  }
 
   const clear = () => {
     setEditId(null);
@@ -115,7 +122,7 @@ const id = (Math.random() * 100).toFixed(6);
                 value={data.title}
                 onChange={handleChange}
               />
-              <span className="text-danger">{error}</span>
+              {/* <span className="text-danger">{error}</span> */}
             </div>
             <div className="form-group mb-3">
               <textarea
@@ -127,7 +134,7 @@ const id = (Math.random() * 100).toFixed(6);
                 onChange={handleChange}
                 required={true}
               ></textarea>
-              <span className="text-danger">{error}</span>
+              {/* <span className="text-danger">{error}</span> */}
             </div>
             <div className="form-group mb-3">
               <select
@@ -141,28 +148,28 @@ const id = (Math.random() * 100).toFixed(6);
                 <option value="completed">Completed</option>
                 <option value="pending">Pending</option>
               </select>
-              <span className="text-danger">{error}</span>
+              {/* <span className="text-danger">{error}</span> */}
             </div>
             <div className="form-group mb-3 outline-light">
               <input
                 type="text"
                 className="w-100 rounded border p-1"
-                placeholder="End Date"
+                placeholder="Deadline"
                 name="deadline"
                 value={data.deadline}
                 onChange={handleChange}
                 required={true}
               />
-              <span className="text-danger">{error}</span>
+              {/* <span className="text-danger">{error}</span> */}
             </div>
           </form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
+          <Button variant="secondary" onClick={handleEditButton}>
+            Update Agenda
           </Button>
           <Button variant="primary" type="submit" onClick={handleSubmit}>
-            {isEditing ? "Edit" : "Save"}
+            Save Agenda
           </Button>
         </Modal.Footer>
       </Modal>
