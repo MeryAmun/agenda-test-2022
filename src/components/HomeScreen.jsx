@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Table, Container } from "react-bootstrap";
-import { ModalComponent, CsvForm, ExportCsvComponent} from "./index";
+import { ModalComponent, ImportCsv, ExportCsvComponent} from "./index";
 import { FaTimes} from 'react-icons/fa';
 import { AiTwotoneEdit }from 'react-icons/ai'
 import { useSelector, useDispatch } from "react-redux";
@@ -23,17 +23,6 @@ const HomeScreen = () => {
   const handleClose = () => {
     setShow(false)
 };
-console.log(agendas)
-// const editHandler = (itemIndex) => {
-//   const specificItem = agendas.find((item, index) => {
-//     if(index === itemIndex){
-//   }  return item})
-//   setIsEditing(true);
-//   setEditId(index)
-//  dispatch(editAGenda(index))
-//   setData(specificItem);
-//   handleShow()
-// };
 
   return (
     <Container className="p-2 d-flex  flex-column justify-content-center align-items-center">
@@ -62,6 +51,7 @@ console.log(agendas)
       <Table striped bordered hover>
         <thead>
           <tr>
+          <th>IDs</th>
             <th>Title</th>
             <th>Description</th>
             <th>Status</th>
@@ -71,10 +61,10 @@ console.log(agendas)
           </tr>
         </thead>
         {
-          agendas.sort((a, b) => b - a)
-          .map((agenda) => (
+          agendas?.map((agenda) => (
             <tbody  key={agenda.id}>
           <tr>
+          <td>{agenda.id}</td>
             <td>{agenda.title}</td>
             <td  className="word-wrap">{agenda.description}</td>
             <td>{agenda.status}</td>
@@ -115,7 +105,7 @@ console.log(agendas)
 <div className="header m-4">
   <h4>Import Files Here</h4>
 </div>
-<CsvForm/>
+<ImportCsv/>
 </div>
     </Container>
   );

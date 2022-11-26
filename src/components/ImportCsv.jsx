@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-
 import { Table } from "react-bootstrap";
 import { CSVLink } from "react-csv";
 
-const CsvForm = () => {
+const ImportCsv = () => {
   const [file, setFile] = useState();
   const [csvArray, setCsvArray] = useState();
   const fileReader = new FileReader();
@@ -85,7 +84,7 @@ const CsvForm = () => {
         <thead>
           <tr key={"header"}>
             {headerKeys?.map((key) => (
-              <th>{key}</th>
+              <th key={key}>{key}</th>
             ))}
           </tr>
         </thead>
@@ -104,4 +103,4 @@ const CsvForm = () => {
   );
 };
 
-export default CsvForm;
+export default ImportCsv;

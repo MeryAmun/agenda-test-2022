@@ -26,7 +26,7 @@ const ModalComponent = ({
   const [error, setError] = useState("");
   const { agendas } = useSelector((state) => state.reducer);
   const dispatch = useDispatch();
-const id = (Math.random() * 100).toFixed(6);
+
 
 
   const handleChange = (e) => {
@@ -37,11 +37,10 @@ const id = (Math.random() * 100).toFixed(6);
   };
 
   useEffect(() => {
-    agendas.filter((agenda) => !agenda.title )
+    agendas?.filter((agenda) => agenda.title )
   }, [agendas])
   
 
-  console.log(agendas)
 
 
   const handleSubmit = (e) => {
@@ -50,6 +49,8 @@ const id = (Math.random() * 100).toFixed(6);
     if (data.description === "") setError("please fill in Description");
     if (data.status === "") setError("please fill in Status");
     if (data.deadline === "") setError("please fill in deadline");
+
+    const id = (Math.random() * 100).toFixed(6);
      
       if(data.title && data.deadline && data.description && data.status){
       dispatch(addAGenda({...data,id}));
@@ -62,6 +63,7 @@ const id = (Math.random() * 100).toFixed(6);
       });
       clear();
     }
+    handleClose()
   };
 
   const handleEditButton = () => {
@@ -75,7 +77,9 @@ const id = (Math.random() * 100).toFixed(6);
         startDate: now.toDateString(),
         deadline: editedData.deadline,
       });
-     dispatch(editAGenda(editId, {
+      setEditId(null);
+      setIsEditing(false);
+     dispatch(editAGenda(editId, {...editedData,
       id:editId,
       title: editedData.title,
       description: editedData.description,
@@ -83,12 +87,10 @@ const id = (Math.random() * 100).toFixed(6);
       startDate:editedData.startDate,
       deadline: editedData.deadline,
     }))
-      // if(editedData.title && editedData.deadline && editedData.description && editedData.status && editIndex)
-      // setData(editedData);
-      setEditId(null);
-      setIsEditing(false);
+      
      
     } 
+
   }
 
   const clear = () => {
@@ -166,7 +168,7 @@ const id = (Math.random() * 100).toFixed(6);
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleEditButton}>
-            Update Agenda
+            Edit Agenda
           </Button>
           <Button variant="primary" type="submit" onClick={handleSubmit}>
             Save Agenda
