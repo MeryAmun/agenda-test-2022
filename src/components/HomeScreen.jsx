@@ -12,7 +12,6 @@ const HomeScreen = () => {
   const [show, setShow] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [fileName] = useState('ReactCsv')
   const { agendas }  = useSelector((state) => state.reducer);
   const dispatch = useDispatch();
   const [data, setData] = useState();
@@ -45,7 +44,7 @@ const HomeScreen = () => {
         >
           Add Agenda
         </button>
-        <ExportCsvComponent csvData={agendas} fileName={fileName}/>
+        <ExportCsvComponent/>
        </div>
       </div>
       <Table striped bordered hover>
@@ -93,9 +92,6 @@ const HomeScreen = () => {
               </button>
             </td>
           </tr>
-
-          {/* <td colSpan={2}>Larry the Bird</td>
-          <td colSpan={2}>Larry the Bird</td> */}
         </tbody>
           ) )
         }

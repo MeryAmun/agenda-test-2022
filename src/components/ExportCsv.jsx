@@ -1,11 +1,14 @@
 import React from 'react';
 import { CSVLink } from 'react-csv'
+import { useSelector } from "react-redux";
 
-const ExportCsvComponent = ({csvData, fileName}) => {
-  
+const ExportCsvComponent = () => {
+  const { agendas }  = useSelector((state) => state.reducer);
+  const filename = 'ReactCsv.csv'
+
   return (
    <button type='button' className="btn btn-secondary text-white">
-     <CSVLink data={csvData} filename={fileName}  className="text-white text-decoration-none">Export CSV</CSVLink>
+     <CSVLink data={(agendas)}  filename={filename} className="text-white text-decoration-none">Export CSV</CSVLink>
  
    </button>
   )
